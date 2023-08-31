@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { Item } from "../assets/types"
+import { Link } from "react-router-dom"
 
 function ItemList() {
     const [items, setItems] = useState<Item[]>([])
@@ -31,7 +32,7 @@ function ItemList() {
                 {items.map((item, index) => (
                     <tr key={index}>
                         <td>
-                            <img src={item.image} className="avatar" />
+                        <Link to={`/item/${index}`}><img src={item.image} className="avatar" /></Link>
                         </td>
                         <td>{item.name}</td>
                         <td>{item.age}</td>
