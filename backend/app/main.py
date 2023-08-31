@@ -2,7 +2,7 @@ import json
 import os
 from typing import List
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -42,3 +42,13 @@ def read_all_items():
         data = json.load(json_file)
         items = data.get("items", [])
         return items
+
+@app.get("/items/{item_index}", response_model=dict)
+def read_item_by_index(item_index: int):
+    with open(items_path, "r", encoding="utf-8") as json_file:
+        data = json.load(json_file)
+        items = data.get("items", [])
+        if 0 <= item_index < len(items):
+            return items[item_index]
+        else:
+            raise HTTPException(status_code=404, detail="Item not found")
