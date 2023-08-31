@@ -1,23 +1,18 @@
-import { useEffect, useState } from "react"
 import { Item } from "../assets/types"
 import { Link } from "react-router-dom"
 
-function ItemList() {
-    const [items, setItems] = useState<Item[]>([])
+function ItemList(props: { items: Item[] }) {
 
-    const getAllItems = async () => {
-        try {
-            await fetch("http://localhost:8000/items")
-                .then(res => res.json())
-                .then(data => setItems(data))
-        } catch (error) {
-            console.log(error)
-        }
+
+    const handleEdit = async (index: number) => {
+        console.log("EDITING", index)
     }
 
-    useEffect(() => {
-        getAllItems()
-    }, [])
+    const deleteItem = async (index: number) => {
+        console.log(index, "DELETED")
+    }
+
+
     return (
         <table className="item-list-table">
             <thead>
@@ -26,21 +21,27 @@ function ItemList() {
                     <th>Name</th>
                     <th>Age</th>
                     <th>Hobby</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
-                {items.map((item, index) => (
+                {props.items.map((item, index) => (
                     <tr key={index}>
                         <td>
-                        <Link to={`/item/${index}`}><img src={item.image} className="avatar" /></Link>
+                            <Link to={`/item/${index}`}><img src={item.image} className="avatar" /></Link>
                         </td>
                         <td>{item.name}</td>
                         <td>{item.age}</td>
                         <td>{item.hobby}</td>
+                        <td>
+                            <button disabled className="edit-button" onClick={() => handleEdit(index)}>Edit</button>
+                            <button disabled className="delete-button" onClick={() => deleteItem(index)}>Delete</button>
+                        </td>
                     </tr>
                 ))}
             </tbody>
-        </table>)
+        </table>
+    )
 }
 
 export default ItemList
