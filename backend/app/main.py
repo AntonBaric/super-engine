@@ -61,3 +61,15 @@ def add_item(item: Item):
     save_item(items)
 
     return item
+
+@app.delete("/delete-item/{item_index}")
+def delete_item_by_index(item_index: int):
+    items = load_items()
+
+    if item_index < 0 or item_index >= len(items):
+        raise HTTPException(status_code=400, detail="Invalid item index")
+    
+    deleted_item = items.pop(item_index)
+    save_item(items)
+    
+    return {"message": "Item deleted", "deleted_item": deleted_item}
