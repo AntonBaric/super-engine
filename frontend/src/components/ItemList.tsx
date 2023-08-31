@@ -10,6 +10,15 @@ function ItemList(props: { items: Item[] }) {
 
     const deleteItem = async (index: number) => {
         console.log(index, "DELETED")
+        try {
+            await fetch(`http://localhost:8000/delete-item/${index}`, {
+                method: "DELETE"
+            })
+                .then(res => res.json())
+                .then(data => console.log(data))
+        } catch (error) {
+            console.log(error)
+        }
     }
 
 
@@ -35,7 +44,7 @@ function ItemList(props: { items: Item[] }) {
                         <td>{item.hobby}</td>
                         <td>
                             <button disabled className="edit-button" onClick={() => handleEdit(index)}>Edit</button>
-                            <button disabled className="delete-button" onClick={() => deleteItem(index)}>Delete</button>
+                            <button className="delete-button" onClick={() => deleteItem(index)}>Delete</button>
                         </td>
                     </tr>
                 ))}
