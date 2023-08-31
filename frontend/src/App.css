@@ -40,3 +40,27 @@
 .read-the-docs {
   color: #888;
 }
+
+.item-list-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #ccc;
+}
+
+.item-list-table th,
+.item-list-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.item-list-table th {
+  background-color: #74738e;
+}
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
