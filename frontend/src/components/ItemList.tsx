@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { Item, emptyItem } from "../assets/types"
 import { Link } from "react-router-dom"
 
@@ -9,6 +9,25 @@ function ItemList(props: { items: Item[], addItem: (newItem: Item) => void, dele
     const handleEdit = async (index: number) => {
         console.log("EDITING", index)
     }
+
+    const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
+        const fileInput = e.target;
+        const selectedFile = fileInput?.files?.[0];
+
+        if (!selectedFile) {
+            return;
+        }
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+            // Convert the file to base64 and set it in newItem
+            setNewItem({ ...newItem, image: event.target?.result as string });
+        };
+
+        if (selectedFile) {
+            reader.readAsDataURL(selectedFile); // Read the file as a data URL (base64)
+        }
+    };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -57,7 +76,7 @@ function ItemList(props: { items: Item[], addItem: (newItem: Item) => void, dele
                     ))}
                     {addingMode ?
                         <tr>
-                            <td>upload</td>
+                            <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e)} />
                             <td>
                                 <input type="text" name="name" value={newItem.name} onChange={handleInputChange} />
                             </td>
