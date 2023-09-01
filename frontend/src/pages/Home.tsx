@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import AddItem from '../components/AddItem'
 import ItemList from '../components/ItemList'
 import { Item } from '../assets/types'
 
@@ -16,21 +15,45 @@ function Home() {
         }
     }
 
+    const addItem = async (newItem: Item) => {
+        try {
+            const response = await fetch("http://localhost:8000/add-item", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(newItem),
+            });
 
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+                setItems([...items, newItem]);
+            } else {
+                // Handle non-successful response, e.g., show an error message
+                console.error("Failed to add item.");
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     const deleteItem = async (indexToDelete: number) => {
         try {
-            await fetch(`http://localhost:8000/delete-item/${indexToDelete}`, {
+            const response = await fetch(`http://localhost:8000/delete-item/${indexToDelete}`, {
                 method: "DELETE"
             })
-                .then(res => res.json())
-                .then(data => console.log(data))
+
+            if (response.ok) {
+                const data = await response.json()
+                console.log(data)
+                const updatedItems = [...items];
+                updatedItems.splice(indexToDelete, 1);
+                setItems(updatedItems);
+            }
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
-        const updatedItems = [...items];
-        updatedItems.splice(indexToDelete, 1);
-        setItems(updatedItems);
     };
 
     useEffect(() => {
@@ -39,8 +62,7 @@ function Home() {
 
     return (
         <div>
-            <AddItem />
-            <ItemList items={items} deleteItem={deleteItem} />
+            <ItemList items={items} addItem={addItem} deleteItem={deleteItem} />
         </div>
     )
 }

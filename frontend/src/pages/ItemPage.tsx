@@ -1,13 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Item } from "../assets/types";
-
-const emptyItem: Item = {
-    name: "",
-    age: 0,
-    hobby: "",
-    image: ""
-}
+import { Item, emptyItem } from "../assets/types";
 
 function ItemPage() {
     const { id } = useParams<{ id: string }>();
