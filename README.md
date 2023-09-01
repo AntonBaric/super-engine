@@ -1,11 +1,49 @@
 # super-engine
+Fullstack app to read with a json file as a database
 
-Backend(FastAPI):
+## Backend (Python FastAPI):
 
-docker build -t super-engine-backend .
-docker run --name backend -p 8080:8080 super-engine-backend
+### Run on local machine
 
-Frontend(React-Typescript):
+```
+cd backend
 
-docker build -t super-engine-frontend .
-docker run --name frontend -p 3000:3000 super-engine-frontend
+python3 -m venv .env
+source .env/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+
+uvicorn app.main:app
+```
+
+### Run Docker container
+
+```
+docker build -t super-engine/backend ./backend
+docker run -p 8000:8000 super-engine/backend
+```
+
+## Frontend(React-Typescript):
+
+### Run on local machine
+
+```
+cd frontend
+
+npm install
+npm run dev
+```
+
+### Run Docker container
+
+```
+docker build -t super-engine/frontend ./frontend
+docker run -p 3000:3000 super-engine/frontend
+```
+
+## Run using Docker Compose
+
+```
+docker-compose build
+docker-compose up
+```
