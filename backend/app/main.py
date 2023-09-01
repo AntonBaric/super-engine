@@ -20,11 +20,13 @@ app.add_middleware(
 
 items_path = os.getcwd() + "/items.json"
 
+
 def load_items():
     with open(items_path, "r", encoding="utf-8") as json_file:
         data = json.load(json_file)
         items = data.get("items", [])
         return items
+
 
 def save_item(item):
     data = {"items": item}
@@ -62,14 +64,35 @@ def add_item(item: Item):
 
     return item
 
+
+@app.put("/update-item/{item_index}", response_model=Item)
+def update_item(item_index: int, item: Item):
+    items = load_items()
+
+    if item_index < 0 or item_index >= len(items):
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    items[item_index] = item.dict()
+
+
+    # Update the item in the loaded JSON data
+    if item_index < len(items):
+        items[item_index] = item.dict()
+
+        # Save the updated items back to the JSON file
+        save_item(items)
+
+    return item
+
+
 @app.delete("/delete-item/{item_index}")
 def delete_item_by_index(item_index: int):
     items = load_items()
 
     if item_index < 0 or item_index >= len(items):
         raise HTTPException(status_code=400, detail="Invalid item index")
-    
+
     deleted_item = items.pop(item_index)
     save_item(items)
-    
+
     return {"message": "Item deleted", "deleted_item": deleted_item}
