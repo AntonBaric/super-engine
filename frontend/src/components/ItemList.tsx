@@ -2,13 +2,12 @@ import { ChangeEvent, useState } from "react";
 import { Item, emptyItem } from "../assets/types"
 import { Link } from "react-router-dom"
 
-function ItemList(props: { items: Item[], addItem: (newItem: Item) => void, deleteItem: (indexToDelete: number) => void; }) {
+function ItemList(props: { items: Item[], addItem: (newItem: Item) => void, editItem: (item: Item, index: number) => void, deleteItem: (indexToDelete: number) => void; }) {
     const [addingMode, setAddingMode] = useState(false)
+    const [editingMode, setEditingMode] = useState(false)
     const [newItem, setNewItem] = useState<Item>(emptyItem);
-
-    const handleEdit = async (index: number) => {
-        console.log("EDITING", index)
-    }
+    const [currentItem, setCurrentItem] = useState<Item>(emptyItem)
+    const [currentIndex, setCurrentIndex] = useState<number>()
 
     const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
         const fileInput = e.target;
@@ -34,9 +33,21 @@ function ItemList(props: { items: Item[], addItem: (newItem: Item) => void, dele
         setNewItem({ ...newItem, [name]: value });
     };
 
+    const handleUpdateInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setCurrentItem({ ...currentItem, [name]: value });
+    };
+
     const toggleAddingMode = () => {
         setAddingMode(!addingMode);
     };
+
+    const toggleEditingMode = (index: number) => {
+        setEditingMode(!editingMode)
+        //console.log(props.items[index])
+        setCurrentIndex(index)
+        setCurrentItem(props.items[index])
+    }
 
     const saveItem = () => {
         props.addItem(newItem);
@@ -45,6 +56,13 @@ function ItemList(props: { items: Item[], addItem: (newItem: Item) => void, dele
             setAddingMode(false);
         }
     };
+
+    const updateItem = () => {
+        props.editItem(currentItem, currentIndex as number)
+        if (editingMode) {
+            setEditingMode(false);
+        }
+    }
 
     return (
         <>
@@ -60,23 +78,47 @@ function ItemList(props: { items: Item[], addItem: (newItem: Item) => void, dele
                     </tr>
                 </thead>
                 <tbody>
-                    {props.items.map((item, index) => (
-                        <tr key={index}>
+                    {editingMode ?
+                        <tr>
                             <td>
-                                <Link to={`/item/${index}`}><img src={item.image} className="avatar" /></Link>
+                                <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e)} />
                             </td>
-                            <td>{item.name}</td>
-                            <td>{item.age}</td>
-                            <td>{item.hobby}</td>
                             <td>
-                                <button disabled className="edit-button" onClick={() => handleEdit(index)}>Edit</button>
-                                <button disabled={addingMode} className="delete-button" onClick={() => props.deleteItem(index)}>Delete</button>
+                                <input type="text" name="name" value={currentItem.name} onChange={handleUpdateInputChange} />
+                            </td>
+                            <td>
+                                <input type="number" name="age" value={currentItem.age} onChange={handleUpdateInputChange} />
+                            </td>
+                            <td>
+                                <input type="text" name="hobby" value={currentItem.hobby} onChange={handleUpdateInputChange} />
+                            </td>
+                            <td>
+                                <button onClick={updateItem}>Save</button>
+                                <button onClick={() => setEditingMode(false)}>Cancel</button>
                             </td>
                         </tr>
-                    ))}
+                        : <>
+                            {props.items.map((item, index) => (
+                                <tr key={index}>
+                                    <td>
+                                        <Link to={`/item/${index}`}><img src={item.image} className="avatar" /></Link>
+                                    </td>
+                                    <td>{item.name}</td>
+                                    <td>{item.age}</td>
+                                    <td>{item.hobby}</td>
+                                    <td>
+                                        <button className="edit-button" onClick={() => toggleEditingMode(index)}>Edit</button>
+                                        <button disabled={addingMode} className="delete-button" onClick={() => props.deleteItem(index)}>Delete</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </>}
+
                     {addingMode ?
                         <tr>
-                            <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e)} />
+                            <td>
+                                <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e)} />
+                            </td>
                             <td>
                                 <input type="text" name="name" value={newItem.name} onChange={handleInputChange} />
                             </td>

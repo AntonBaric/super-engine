@@ -38,6 +38,31 @@ function Home() {
         }
     }
 
+    const editItem = async (item: Item, index: number) => {
+        try {
+            const response = await fetch(`http://localhost:8000/update-item/${index}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(item),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+                const updatedItems = [...items];
+                updatedItems[index] = item;
+                setItems(updatedItems);
+            } else {
+                // Handle non-successful response, e.g., show an error message
+                console.error("Failed to add item.");
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     const deleteItem = async (indexToDelete: number) => {
         try {
             const response = await fetch(`http://localhost:8000/delete-item/${indexToDelete}`, {
@@ -62,7 +87,7 @@ function Home() {
 
     return (
         <div>
-            <ItemList items={items} addItem={addItem} deleteItem={deleteItem} />
+            <ItemList items={items} addItem={addItem} editItem={editItem} deleteItem={deleteItem} />
         </div>
     )
 }
