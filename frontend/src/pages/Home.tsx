@@ -16,6 +16,23 @@ function Home() {
         }
     }
 
+
+
+    const deleteItem = async (indexToDelete: number) => {
+        try {
+            await fetch(`http://localhost:8000/delete-item/${indexToDelete}`, {
+                method: "DELETE"
+            })
+                .then(res => res.json())
+                .then(data => console.log(data))
+        } catch (error) {
+            console.log(error)
+        }
+        const updatedItems = [...items];
+        updatedItems.splice(indexToDelete, 1);
+        setItems(updatedItems);
+    };
+
     useEffect(() => {
         getAllItems()
     }, [])
@@ -23,7 +40,7 @@ function Home() {
     return (
         <div>
             <AddItem />
-            <ItemList items={items} />
+            <ItemList items={items} deleteItem={deleteItem} />
         </div>
     )
 }
